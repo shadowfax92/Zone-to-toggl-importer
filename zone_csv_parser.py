@@ -6,7 +6,6 @@ import re
 
 TOGGLE_EMAIL = 'erbor.iceman@gmail.com'
 TOGGLE_PROJECT = 'Project 1'
-TOGGLE_TAG = 'zone'
 OUTPUT_FILENAME = 'toggl_import.csv'
 
 def parse_file(filename):
@@ -14,7 +13,6 @@ def parse_file(filename):
     nfh = open(OUTPUT_FILENAME,'w')
     for line in csv.reader(fh,delimiter=',',skipinitialspace=True):
         col = []
-        col=line
         # col 3 is time which is in decimal format. converting it to HH:MM:SS format
         # 2.06 => 02:06:00
         if re.search(r'[0-9]+\.[0-9]+',line[2]):
@@ -33,19 +31,21 @@ def parse_file(filename):
             res = str(it)+":"+str(dec)+":"+"00"
             
             #storing result
-            col[2] = res
-
             # appending custom columns required toggl
             col.append(TOGGLE_PROJECT)
             col.append(TOGGLE_EMAIL)
             col.append(line[0]) #adding Zone description as description for task
-            col.append(TOGGLE_TAG)
+            col.append(line[0])
+            col.append(line[1])
+            col.append(res)
             col.append('00:00:00')
         else:
             col.append('Project')
             col.append('Email')
             col.append('Description')
             col.append('Tag')
+            col.append('Date')
+            col.append('Duration')
             col.append('Start time')
 
         nfh.write(','.join(col))
